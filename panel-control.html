@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Data Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .login-screen .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .login-screen h1 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .login-screen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2C3E50;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #FF6B6B;
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fredoka', sans-serif;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .error-message {
+            background: #FFEBEE;
+            color: #C62828;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            border: 2px solid #EF5350;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #FF6B6B;
+        }
+
+        /* Control Panel Screen */
+        .control-panel {
+            display: none;
+        }
+
+        .control-panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .panel-header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .panel-header .welcome {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .panel-body {
+            padding: 40px;
+        }
+
+        .control-section {
+            background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid #E0E0E0;
+        }
+
+        .control-section h3 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .control-section p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .status-badge.active {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .status-badge.inactive {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .toggle-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .toggle-button.activate {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            color: white;
+        }
+
+        .toggle-button.deactivate {
+            background: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
+            color: white;
+        }
+
+        .toggle-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box {
+            background: #E3F2FD;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info-box strong {
+            color: #1565C0;
+        }
+
+        .logout-button {
+            width: 100%;
+            background: #E0E0E0;
+            color: #666;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 20px;
+        }
+
+        .logout-button:hover {
+            background: #BDBDBD;
+        }
+
+        .success-message {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            border: 2px solid #4CAF50;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .login-screen, .panel-body {
+                padding: 30px 25px;
+            }
+
+            .login-screen h1, .panel-header h1 {
+                font-size: 1.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LOGIN SCREEN -->
+        <div id="loginScreen" class="login-screen">
+            <div class="icon">🔐</div>
+            <h1>Panel de Control</h1>
+            <p>Data Coach - Acceso Restringido</p>
+
+            <form id="loginForm" onsubmit="login(event)">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="Ingrese su usuario"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="Ingrese su contraseña"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="login-button">
+                    🔓 Iniciar Sesión
+                </button>
+
+                <div id="errorMessage" class="error-message">
+                    ❌ Usuario o contraseña incorrectos
+                </div>
+            </form>
+
+            <a href="index.html" class="back-link">← Volver al inicio</a>
+        </div>
+
+        <!-- CONTROL PANEL SCREEN -->
+        <div id="controlPanel" class="control-panel">
+            <div class="panel-header">
+                <h1>🔧 Panel de Control</h1>
+                <p class="welcome">Bienvenido, <strong>Héctor Lozada</strong></p>
+            </div>
+
+            <div class="panel-body">
+                <div class="control-section">
+                    <h3>🚦 Modo Mantenimiento</h3>
+                    <p>
+                        Activa el modo mantenimiento para bloquear temporalmente el acceso al sitio 
+                        mientras realizas actualizaciones o correcciones.
+                    </p>
+
+                    <div id="statusIndicator"></div>
+
+                    <button 
+                        id="toggleButton" 
+                        class="toggle-button" 
+                        onclick="toggleMaintenance()"
+                    >
+                    </button>
+
+                    <div class="info-box">
+                        <strong>💡 Nota:</strong> Cuando el modo mantenimiento está activo, todos los usuarios 
+                        (maestros, padres, estudiantes) verán una pantalla de "Sitio en Mantenimiento" y 
+                        no podrán acceder a los dashboards.
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>ℹ️ Información del Sistema</h3>
+                    <p style="margin-bottom: 10px;"><strong>Escuela:</strong> Celso González Vaillant</p>
+                    <p style="margin-bottom: 10px;"><strong>Ubicación:</strong> Loíza, Puerto Rico</p>
+                    <p style="margin-bottom: 10px;"><strong>Data Coach:</strong> Héctor Lozada</p>
+                    <p style="margin-bottom: 10px;"><strong>Total Estudiantes:</strong> 164</p>
+                    <p><strong>Períodos Activos:</strong> 10 Semanas, 20 Semanas</p>
+                </div>
+
+                <div id="successMessage" class="success-message">
+                    ✅ Cambios guardados exitosamente
+                </div>
+
+                <button class="logout-button" onclick="logout()">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN - CAMBIA AQUÍ TU CONTRASEÑA
+        // ============================================
+        const ADMIN_CREDENTIALS = {
+            username: 'hector.lozada',
+            password: 'DataCoach2024!'  // ⚠️ CAMBIA ESTA CONTRASEÑA
+        };
+
+        // Verificar si ya hay una sesión activa
+        window.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (isLoggedIn === 'true') {
+                showControlPanel();
+            }
+            updateMaintenanceStatus();
+        });
+
+        // Login
+        function login(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                // Login exitoso
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showControlPanel();
+                errorMessage.classList.remove('show');
+            } else {
+                // Login fallido
+                errorMessage.classList.add('show');
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // Mostrar panel de control
+        function showControlPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('controlPanel').classList.add('active');
+            updateMaintenanceStatus();
+        }
+
+        // Actualizar estado de mantenimiento
+        function updateMaintenanceStatus() {
+            const maintenanceMode = localStorage.getItem('maintenanceMode') === 'true';
+            const statusIndicator = document.getElementById('statusIndicator');
+            const toggleButton = document.getElementById('toggleButton');
+
+            if (statusIndicator && toggleButton) {
+                if (maintenanceMode) {
+                    statusIndicator.innerHTML = '<span class="status-badge active">🔴 MODO MANTENIMIENTO ACTIVO</span>';
+                    toggleButton.className = 'toggle-button deactivate';
+                    toggleButton.innerHTML = '🟢 Desactivar Mantenimiento';
+                } else {
+                    statusIndicator.innerHTML = '<span class="status-badge inactive">🟢 SITIO OPERANDO NORMALMENTE</span>';
+                    toggleButton.className = 'toggle-button activate';
+                    toggleButton.innerHTML = '🔴 Activar Mantenimiento';
+                }
+            }
+        }
+
+        // Toggle mantenimiento
+        function toggleMaintenance() {
+            const currentMode = localStorage.getItem('maintenanceMode') === 'true';
+            const newMode = !currentMode;
+            
+            localStorage.setItem('maintenanceMode', newMode.toString());
+            updateMaintenanceStatus();
+            
+            // Mostrar mensaje de éxito
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = newMode 
+                ? '✅ Modo Mantenimiento ACTIVADO. El sitio ahora está bloqueado para todos los usuarios.'
+                : '✅ Modo Mantenimiento DESACTIVADO. El sitio está nuevamente accesible para todos.';
+            successMessage.classList.add('show');
+            
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Prevenir acceso directo sin login
+        window.addEventListener('pageshow', function() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (isLoggedIn !== 'true') {
+                document.getElementById('controlPanel').classList.remove('active');
+                document.getElementById('loginScreen').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
