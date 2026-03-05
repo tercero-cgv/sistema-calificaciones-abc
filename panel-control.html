@@ -402,8 +402,8 @@
         // CONFIGURACIÓN - CAMBIA AQUÍ TU CONTRASEÑA
         // ============================================
         const ADMIN_CREDENTIALS = {
-            username: 'cgv2026',
-            password: 'DataCoach_2026'  // ⚠️ CAMBIA ESTA CONTRASEÑA
+            username: 'coach',
+            password: '2026'  // ⚠️ CAMBIA ESTA CONTRASEÑA
         };
 
         // Verificar si ya hay una sesión activa
@@ -413,6 +413,11 @@
                 showControlPanel();
             }
             updateMaintenanceStatus();
+            
+            // ⚠️ DEBUG - ELIMINAR DESPUÉS DE CONFIRMAR
+            console.log('Usuario configurado:', ADMIN_CREDENTIALS.username);
+            console.log('Contraseña configurada:', ADMIN_CREDENTIALS.password);
+            alert('CREDENCIALES CONFIGURADAS:\nUsuario: ' + ADMIN_CREDENTIALS.username + '\nContraseña: ' + ADMIN_CREDENTIALS.password);
         });
 
         // Login
