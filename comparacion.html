@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparación de Períodos - Sistema ABC</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 50%, #FFA500 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .intro-section {
+            padding: 40px;
+            background: linear-gradient(135deg, #F5F5F5 0%, #E8E8E8 100%);
+            text-align: center;
+        }
+
+        .intro-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .intro-section p {
+            color: #666;
+            font-size: 1.15em;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .periods-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: white;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            background: #F8F9FA;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .legend-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-item.period-10 {
+            border-color: #4A90E2;
+        }
+
+        .legend-item.period-20 {
+            border-color: #4ECDC4;
+        }
+
+        .legend-item.period-30 {
+            border-color: #FFA500;
+        }
+
+        .legend-item.period-40 {
+            border-color: #9B59B6;
+        }
+
+        .legend-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .period-10 .legend-color {
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+        }
+
+        .period-20 .legend-color {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+        }
+
+        .period-30 .legend-color {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+        }
+
+        .period-40 .legend-color {
+            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
+        }
+
+        .legend-info h4 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            margin-bottom: 3px;
+        }
+
+        .legend-info p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .comparison-section {
+            padding: 40px;
+        }
+
+        .comparison-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            font-size: 2em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 3px solid #E0E0E0;
+        }
+
+        .chart-container h3 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .full-width-chart {
+            grid-column: 1 / -1;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .insight-card.success {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+        }
+
+        .insight-card.warning {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+        }
+
+        .insight-card.danger {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+        }
+
+        .insight-card h4 {
+            font-family: 'Fredoka', sans-serif;
+            color: #2C3E50;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+
+        .insight-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .insight-card p {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .insight-card ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .insight-card li {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin: 30px 0;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #F5F5F5;
+        }
+
+        .trend-icon {
+            font-size: 1.3em;
+            margin-left: 8px;
+        }
+
+        .trend-up {
+            color: #28a745;
+        }
+
+        .trend-down {
+            color: #dc3545;
+        }
+
+        .trend-stable {
+            color: #ffc107;
+        }
+
+        .actions-bar {
+            padding: 30px 40px;
+            background: linear-gradient(135deg, #F5F5F5 0%, #E8E8E8 100%);
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-button.print {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #2C3E50;
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .actions-bar, .back-button {
+                display: none !important;
+            }
+
+            .chart-container {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back-button {
+                position: static;
+                display: block;
+                margin: 10px auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-button">← Volver al Inicio</a>
+            <h1>📊 Comparación Entre Períodos</h1>
+            <p>Análisis Comparativo de Rendimiento Académico</p>
+        </header>
+
+        <div class="intro-section">
+            <h2>Evolución del Rendimiento Académico</h2>
+            <p>
+                Visualiza cómo ha evolucionado el desempeño académico a través de los diferentes períodos de evaluación.
+                Identifica tendencias, mejoras y áreas que requieren atención especial.
+            </p>
+        </div>
+
+        <div class="periods-legend">
+            <div class="legend-item period-10">
+                <div class="legend-color"></div>
+                <div class="legend-info">
+                    <h4>📘 10 Semanas</h4>
+                    <p>Promedio: 88%</p>
+                </div>
+            </div>
+            <div class="legend-item period-20">
+                <div class="legend-color"></div>
+                <div class="legend-info">
+                    <h4>📗 20 Semanas</h4>
+                    <p>Promedio: 89%</p>
+                </div>
+            </div>
+            <div class="legend-item period-30">
+                <div class="legend-color"></div>
+                <div class="legend-info">
+                    <h4>📙 30 Semanas</h4>
+                    <p>Próximamente</p>
+                </div>
+            </div>
+            <div class="legend-item period-40">
+                <div class="legend-color"></div>
+                <div class="legend-info">
+                    <h4>📕 40 Semanas</h4>
+                    <p>Próximamente</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2>📈 Gráficas de Tendencias por Materia</h2>
+
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <h3>📚 Español - Evolución</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-espanol-tendencia"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🔢 Matemáticas - Evolución</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-matematicas-tendencia"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🔬 Ciencias - Evolución</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-ciencias-tendencia"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🌍 Inglés - Evolución</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-ingles-tendencia"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container full-width-chart">
+                <h3>📊 Comparativo General - Todas las Materias</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chart-general-comparativo"></canvas>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 60px;">🎯 Análisis de Tendencias por Grado</h2>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Grado</th>
+                        <th>Materia</th>
+                        <th>10 Semanas</th>
+                        <th>20 Semanas</th>
+                        <th>Tendencia</th>
+                        <th>Análisis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="3"><strong>1ro</strong></td>
+                        <td>Español</td>
+                        <td>85%</td>
+                        <td>85%</td>
+                        <td><span class="trend-icon trend-stable">→</span> Estable</td>
+                        <td>Mantiene rendimiento</td>
+                    </tr>
+                    <tr>
+                        <td>Matemáticas</td>
+                        <td>81%</td>
+                        <td>81%</td>
+                        <td><span class="trend-icon trend-stable">→</span> Estable</td>
+                        <td>Necesita refuerzo</td>
+                    </tr>
+                    <tr>
+                        <td>Ciencias</td>
+                        <td>96%</td>
+                        <td>89%</td>
+                        <td><span class="trend-icon trend-down">↓</span> Bajó 7%</td>
+                        <td>Revisar cambios</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>2do</strong></td>
+                        <td>Español</td>
+                        <td>86%</td>
+                        <td>86%</td>
+                        <td><span class="trend-icon trend-stable">→</span> Estable</td>
+                        <td>Consistente</td>
+                    </tr>
+                    <tr>
+                        <td>Matemáticas</td>
+                        <td>95%</td>
+                        <td>95%</td>
+                        <td><span class="trend-icon trend-stable">→</span> Estable</td>
+                        <td>Excelente</td>
+                    </tr>
+                    <tr>
+                        <td>Ciencias</td>
+                        <td>92%</td>
+                        <td>97%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 5%</td>
+                        <td>Gran mejora</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>3ro</strong></td>
+                        <td>Español</td>
+                        <td>86%</td>
+                        <td>90%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 4%</td>
+                        <td>Mejora positiva</td>
+                    </tr>
+                    <tr>
+                        <td>Matemáticas</td>
+                        <td>86%</td>
+                        <td>86%</td>
+                        <td><span class="trend-icon trend-stable">→</span> Estable</td>
+                        <td>Mantiene nivel</td>
+                    </tr>
+                    <tr>
+                        <td>Ciencias</td>
+                        <td>98%</td>
+                        <td>93%</td>
+                        <td><span class="trend-icon trend-down">↓</span> Bajó 5%</td>
+                        <td>Aún excelente</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>4to</strong></td>
+                        <td>Español</td>
+                        <td>93%</td>
+                        <td>96%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 3%</td>
+                        <td>Mejora sostenida</td>
+                    </tr>
+                    <tr>
+                        <td>Matemáticas</td>
+                        <td>81%</td>
+                        <td>89%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 8%</td>
+                        <td>Gran progreso</td>
+                    </tr>
+                    <tr>
+                        <td>Ciencias</td>
+                        <td>70%</td>
+                        <td>93%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 23%</td>
+                        <td>¡Recuperación notable!</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>5to</strong></td>
+                        <td>Español</td>
+                        <td>86%</td>
+                        <td>87%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 1%</td>
+                        <td>Ligera mejora</td>
+                    </tr>
+                    <tr>
+                        <td>Matemáticas</td>
+                        <td>84%</td>
+                        <td>80%</td>
+                        <td><span class="trend-icon trend-down">↓</span> Bajó 4%</td>
+                        <td>Necesita atención</td>
+                    </tr>
+                    <tr>
+                        <td>Ciencias</td>
+                        <td>81%</td>
+                        <td>97%</td>
+                        <td><span class="trend-icon trend-up">↑</span> Subió 16%</td>
+                        <td>¡Excelente mejora!</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 style="margin-top: 60px;">💡 Insights y Recomendaciones</h2>
+
+            <div class="insights-grid">
+                <div class="insight-card success">
+                    <div class="icon">🎉</div>
+                    <h4>Grandes Mejoras</h4>
+                    <p><strong>Destacados entre 10 y 20 semanas:</strong></p>
+                    <ul>
+                        <li>4to Ciencias: +23% (70% → 93%)</li>
+                        <li>5to Ciencias: +16% (81% → 97%)</li>
+                        <li>4to Matemáticas: +8% (81% → 89%)</li>
+                        <li>2do Ciencias: +5% (92% → 97%)</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Acción:</strong> Identificar y replicar estrategias exitosas</p>
+                </div>
+
+                <div class="insight-card warning">
+                    <h4>⚠️ Áreas de Atención</h4>
+                    <p><strong>Descensos entre períodos:</strong></p>
+                    <ul>
+                        <li>1ro Ciencias: -7% (96% → 89%)</li>
+                        <li>3ro Ciencias: -5% (98% → 93%)</li>
+                        <li>5to Matemáticas: -4% (84% → 80%)</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Acción:</strong> Revisar cambios en metodología o contenido</p>
+                </div>
+
+                <div class="insight-card">
+                    <div class="icon">📊</div>
+                    <h4>Consistencia</h4>
+                    <p><strong>Grados con rendimiento estable:</strong></p>
+                    <ul>
+                        <li>1ro Español: 85% (estable)</li>
+                        <li>2do Español: 86% (estable)</li>
+                        <li>2do Matemáticas: 95% (estable)</li>
+                        <li>3ro Matemáticas: 86% (estable)</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Acción:</strong> Mantener estrategias actuales</p>
+                </div>
+
+                <div class="insight-card danger">
+                    <div class="icon">🚨</div>
+                    <h4>Áreas Críticas Persistentes</h4>
+                    <p><strong>Rendimiento bajo en ambos períodos:</strong></p>
+                    <ul>
+                        <li>1ro Matemáticas: 81% (ambos)</li>
+                        <li>5to Matemáticas: bajó a 80%</li>
+                        <li>Inglés 5to: 63% (20 semanas)</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Acción:</strong> Intervención inmediata y tutorías</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-bar">
+            <button class="action-button print" onclick="protectedPrint()">🖨️ Imprimir Comparación</button>
+            <button class="action-button" onclick="protectedDownload()">📥 Descargar Análisis</button>
+            <button class="action-button" onclick="window.location.href='dashboard-10-semanas.html'">📘 Ver 10 Semanas</button>
+            <button class="action-button" onclick="window.location.href='dashboard-20-semanas.html'">📗 Ver 20 Semanas</button>
+        </div>
+
+        <footer>
+            <strong>Comparación Entre Períodos | Sistema de Calificaciones ABC</strong><br>
+            Reporte generado: <span id="fecha-reporte"></span> | Año Escolar 2025-2026
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // SISTEMA DE PROTECCIÓN PARA DESCARGAS
+        // ============================================
+        const DOWNLOAD_PASSWORD = 'data2026'; // ⚠️ Cambia esta contraseña
+        
+        function protectedPrint() {
+            const password = prompt('🔒 Acceso Restringido\n\nIngrese la contraseña para imprimir:');
+            
+            if (password === null) {
+                return; // Usuario canceló
+            }
+            
+            if (password === DOWNLOAD_PASSWORD) {
+                window.print();
+            } else {
+                alert('❌ Contraseña incorrecta. Acceso denegado.');
+            }
+        }
+        
+        function protectedDownload() {
+            const password = prompt('🔒 Acceso Restringido\n\nIngrese la contraseña para descargar:');
+            
+            if (password === null) {
+                return; // Usuario canceló
+            }
+            
+            if (password === DOWNLOAD_PASSWORD) {
+                descargarComparacion();
+            } else {
+                alert('❌ Contraseña incorrecta. Acceso denegado.');
+            }
+        }
+
+        Chart.defaults.font.family = 'Poppins';
+        Chart.defaults.font.size = 12;
+
+        // Datos de tendencias por grado
+        const tendenciaEspanol = {
+            labels: ['1ro', '2do', '3ro', '4to', '5to'],
+            datasets: [
+                {
+                    label: '10 Semanas',
+                    data: [85, 86, 86, 93, 86],
+                    borderColor: '#4A90E2',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: '20 Semanas',
+                    data: [85, 86, 90, 96, 87],
+                    borderColor: '#4ECDC4',
+                    backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        };
+
+        const tendenciaMatematicas = {
+            labels: ['1ro', '2do', '3ro', '4to', '5to'],
+            datasets: [
+                {
+                    label: '10 Semanas',
+                    data: [81, 95, 86, 81, 84],
+                    borderColor: '#4A90E2',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: '20 Semanas',
+                    data: [81, 95, 86, 89, 80],
+                    borderColor: '#4ECDC4',
+                    backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        };
+
+        const tendenciaCiencias = {
+            labels: ['1ro', '2do', '3ro', '4to', '5to'],
+            datasets: [
+                {
+                    label: '10 Semanas',
+                    data: [96, 92, 98, 70, 81],
+                    borderColor: '#4A90E2',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: '20 Semanas',
+                    data: [89, 97, 93, 93, 97],
+                    borderColor: '#4ECDC4',
+                    backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        };
+
+        const tendenciaIngles = {
+            labels: ['1ro', '2do', '3ro', '4to', '5to'],
+            datasets: [
+                {
+                    label: '10 Semanas',
+                    data: [96, 95, 86, 74, 84],
+                    borderColor: '#4A90E2',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: '20 Semanas',
+                    data: [96, 95, 88, 82, 63],
+                    borderColor: '#4ECDC4',
+                    backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        };
+
+        const comparativoGeneral = {
+            labels: ['Español', 'Matemáticas', 'Ciencias', 'Inglés', 'Ed. Física', 'Teatro', 'Est. Sociales'],
+            datasets: [
+                {
+                    label: '10 Semanas',
+                    data: [87, 85, 87, 87, 100, 100, 86],
+                    backgroundColor: 'rgba(74, 144, 226, 0.7)',
+                    borderColor: '#4A90E2',
+                    borderWidth: 3
+                },
+                {
+                    label: '20 Semanas',
+                    data: [89, 86, 94, 85, 99, 96, 90],
+                    backgroundColor: 'rgba(78, 205, 196, 0.7)',
+                    borderColor: '#4ECDC4',
+                    borderWidth: 3
+                }
+            ]
+        };
+
+        // Configuración para gráficas de línea
+        const lineConfig = {
+            type: 'line',
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 13,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        };
+
+        // Crear gráficas de tendencia
+        new Chart(document.getElementById('chart-espanol-tendencia'), {
+            ...lineConfig,
+            data: tendenciaEspanol
+        });
+
+        new Chart(document.getElementById('chart-matematicas-tendencia'), {
+            ...lineConfig,
+            data: tendenciaMatematicas
+        });
+
+        new Chart(document.getElementById('chart-ciencias-tendencia'), {
+            ...lineConfig,
+            data: tendenciaCiencias
+        });
+
+        new Chart(document.getElementById('chart-ingles-tendencia'), {
+            ...lineConfig,
+            data: tendenciaIngles
+        });
+
+        // Gráfica comparativa general
+        new Chart(document.getElementById('chart-general-comparativo'), {
+            type: 'bar',
+            data: comparativoGeneral,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        function descargarComparacion() {
+            const datos = `COMPARACIÓN ENTRE PERÍODOS - SISTEMA ABC
+
+ESPAÑOL
+Grado | 10 Sem | 20 Sem | Tendencia
+1ro   | 85%    | 85%    | Estable
+2do   | 86%    | 86%    | Estable
+3ro   | 86%    | 90%    | ↑ Subió 4%
+4to   | 93%    | 96%    | ↑ Subió 3%
+5to   | 86%    | 87%    | ↑ Subió 1%
+
+MATEMÁTICAS
+Grado | 10 Sem | 20 Sem | Tendencia
+1ro   | 81%    | 81%    | Estable
+2do   | 95%    | 95%    | Estable
+3ro   | 86%    | 86%    | Estable
+4to   | 81%    | 89%    | ↑ Subió 8%
+5to   | 84%    | 80%    | ↓ Bajó 4%
+
+CIENCIAS
+Grado | 10 Sem | 20 Sem | Tendencia
+1ro   | 96%    | 89%    | ↓ Bajó 7%
+2do   | 92%    | 97%    | ↑ Subió 5%
+3ro   | 98%    | 93%    | ↓ Bajó 5%
+4to   | 70%    | 93%    | ↑ Subió 23% ¡NOTABLE!
+5to   | 81%    | 97%    | ↑ Subió 16%
+
+INGLÉS
+Grado | 10 Sem | 20 Sem | Tendencia
+1ro   | 96%    | 96%    | Estable
+2do   | 95%    | 95%    | Estable
+3ro   | 86%    | 88%    | ↑ Subió 2%
+4to   | 74%    | 82%    | ↑ Subió 8%
+5to   | 84%    | 63%    | ↓ Bajó 21% [CRÍTICO]
+
+GRANDES MEJORAS:
+- 4to Ciencias: +23% (recuperación notable)
+- 5to Ciencias: +16% (excelente mejora)
+- 4to Matemáticas: +8%
+
+ÁREAS CRÍTICAS:
+- 5to Inglés: bajó 21% (requiere intervención urgente)
+- 5to Matemáticas: bajó 4% a 80%
+- 1ro Ciencias: bajó 7%
+
+Generado: ${new Date().toLocaleDateString('es-PR')}
+`;
+
+            const blob = new Blob([datos], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Comparacion_Periodos_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        window.onload = function() {
+            document.getElementById('fecha-reporte').textContent = new Date().toLocaleDateString('es-PR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        };
+    </script>
+</body>
+</html>
